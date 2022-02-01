@@ -48,15 +48,15 @@ class DuplicateLayer(Module):
         self.out_features = copied_layer.out_features * 2
         memo_weight = {}
         memo_bias = {}
-        copied_layer_weight = copied_layer.weight.__deepcopy__(memo_weight)
-        copied_layer_bias = copied_layer.bias.__deepcopy__(memo_bias)
-        copied_layer_weight_repeated = copied_layer_weight.repeat_interleave(2)
-        copied_layer_bias_repeated = copied_layer_bias.repeat_interleave(2)
-        print(copied_layer.weight)
-        print(copied_layer_weight_repeated)
-        self.weight = copied_layer_weight
-        if copied_layer_bias is not None:
-            self.bias = copied_layer_bias
+        copied_weight = copied_layer.weight.__deepcopy__(memo_weight)
+        copied_bias = copied_layer.bias.__deepcopy__(memo_bias)
+        copied_weight_repeated = copied_weight.repeat_interleave(2, dim=1)
+        self.weight = copied_weight_repeated
+        if copied_bias is not None:
+            copied_bias_repeated = copied_bias.repeat_interleave(2)
+            self.bias = copied_bias_repeated
+            print(copied_layer.weight)
+            print(copied_weight_repeated)
         else:
             self.register_parameter('bias', None)
         # self.reset_parameters()
